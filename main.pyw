@@ -1,8 +1,7 @@
 # Cross-platform libs
 import threading
-from PyQt6.QtCore import QRunnable, pyqtSlot, QThreadPool
-from PyQt6.QtGui import QIcon, QAction, QMovie
-from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QVBoxLayout, QLabel, QWidget, QApplication
+from PyQt6.QtGui import QIcon, QAction
+from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication
 from bs4 import BeautifulSoup
 from screeninfo import get_monitors
 import requests
@@ -11,7 +10,6 @@ import sys
 # Only windows
 import win32.lib.win32con as win32con
 import ctypes
-
 
 
 # imgFolder = os.getenv("temp")
@@ -68,7 +66,7 @@ class MainWindow(QMainWindow):
 
         # layout = QVBoxLayout()
         # self.label = QLabel()
-        # self.movie = QMovie("gif.gif")
+        # self.movie = QMovie("icons/gif.gif")
         # self.label.setMovie(self.movie)
         # self.movie.start()
         # layout.addWidget(self.label)
@@ -81,13 +79,12 @@ class MainWindow(QMainWindow):
 
 class Buttons:
     def next_image(self):
+        x = threading.Thread(target=Buttons.next_image_thread, args=(self, ))
+        x.start()
+
+    def next_image_thread(self):
         url, name = Parsing.get_image_url(self)
         Parsing.image_download(self, url, name)
-
-        # parse = Parsing(url, name)
-        # # QThreadPool takes ownership and deletes 'hello' automatically
-        # QThreadPool.globalInstance().start(parse)
-
         SysFuncs.set_wallpaper(self, imgFolder + name + ".jpg")
         imgList.append(name)
 
@@ -100,23 +97,7 @@ class Buttons:
 
 
 
-class Parsing(QRunnable):
-    # Trying to add multi-threading
-    # def __init__(self, fn, *args, **kwargs):
-    #     super(Parsing, self).__init__()
-    #     # Store constructor arguments (re-used for processing)
-    #     self.fn = fn
-    #     self.args = args
-    #     self.kwargs = kwargs
-    #
-    # @pyqtSlot()
-    # def run(self):
-    #     '''
-    #     Initialise the runner function with passed args, kwargs.
-    #     '''
-    #     self.fn(*self.args, **self.kwargs)
-
-
+class Parsing:
     def image_download(self, url, name):
         print("downloaded")
         response = requests.get(url)
