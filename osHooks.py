@@ -39,4 +39,7 @@ def get_wallpaper(self):
         name = os.path.splitext(name)[0]
         return name
     elif platform.system() == "Linux":
-        pass
+        if os.environ.get('DESKTOP_SESSION') == "gnome":
+            pass
+        elif os.environ.get('DESKTOP_SESSION') == "plasma":
+            pass
