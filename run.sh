@@ -1,2 +1,6 @@
+#!/bin/bash
+
 pip install -r requirements.txt
-start pythonw main.pyw
+python main.pyw
+
+

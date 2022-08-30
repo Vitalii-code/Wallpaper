@@ -1,15 +1,17 @@
 # Cross-platform libs
 import threading
+from PyQt6 import QtGui
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication
+from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QStyle
 from bs4 import BeautifulSoup
-from screeninfo import get_monitors
 import requests
 import os
 import sys
-# Only windows
-import win32.lib.win32con as win32con
-import ctypes
+import osHooks
+
+
+
+
 
 
 # imgFolder = os.getenv("temp")
@@ -17,7 +19,14 @@ import ctypes
 
 imgList = []
 imgFolder = os.getcwd()
-imgFolder = imgFolder + "\\imgs\\"
+if os.uname().sysname == "Linux":
+    imgFolder = imgFolder + "/imgs/"
+
+elif os.uname().sysname == "Windows":
+    imgFolder = imgFolder + "\\imgs\\"
+else:
+    imgFolder = imgFolder + "/imgs/"
+
 if not os.path.exists(imgFolder):
     os.mkdir(imgFolder)
 
@@ -26,16 +35,12 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # Add current wallpaper to list
-        name = SysFuncs.get_wallpaper(self)
+        name = osHooks.get_wallpaper(self)
         imgList.append(name)
         self.initUI()
 
 
     def initUI(self):
-        # Setting a dark theme
-        #self.setStyleSheet(qdarktheme.load_stylesheet())
-
-
 
         # TrayIcon
         self.tray = QSystemTrayIcon(self)
@@ -48,9 +53,11 @@ class MainWindow(QMainWindow):
         self.prevImage = QAction("Previous image")
         self.quit = QAction("Quit")
 
-        self.nextImage.setIcon(QIcon("icons/arrow_forward.svg"))
-        self.prevImage.setIcon(QIcon("icons/arrow_back.svg"))
-        self.quit.setIcon(QIcon("icons/close.svg"))
+
+
+        self.nextImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-next")))
+        self.prevImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-previous")))
+        self.quit.setIcon(QIcon(QtGui.QIcon.fromTheme("window-close")))
 
         self.nextImage.triggered.connect(Buttons.next_image)
         self.prevImage.triggered.connect(Buttons.prev_image)
@@ -85,7 +92,7 @@ class Buttons:
     def next_image_thread(self):
         url, name = Parsing.get_image_url(self)
         Parsing.image_download(self, url, name)
-        SysFuncs.set_wallpaper(self, imgFolder + name + ".jpg")
+        osHooks.set_wallpaper(self, imgFolder + name + ".jpg")
         imgList.append(name)
 
 
@@ -93,9 +100,12 @@ class Buttons:
         if len(imgList) > 1:
             os.remove("imgs/" + imgList[-1] + ".jpg")
             imgList.pop()
-            SysFuncs.set_wallpaper(self, imgFolder + imgList[-1] + ".jpg")
+            if imgList[-1] != "None":
+                osHooks.set_wallpaper(self, imgFolder + str(imgList[-1]) + ".jpg")
 
 
+# class SysFuncs:
+#
 
 class Parsing:
     def image_download(self, url, name):
@@ -116,27 +126,11 @@ class Parsing:
             soup = BeautifulSoup(url.text, 'lxml')
             parsed = soup.find('img', id="wallpaper")
 
-            width, height = SysFuncs.get_resolution(self)
+            width, height = osHooks.get_resolution(self)
             if int(parsed['data-wallpaper-width']) >= int(width) and int(parsed['data-wallpaper-height']) >= int(
                     height):
                 return parsed["src"], parsed["alt"]
 
-
-
-class SysFuncs:
-    def get_resolution(self):
-        for m in get_monitors():
-            return m.width, m.height
-
-    def set_wallpaper(self, path):
-        ctypes.windll.user32.SystemParametersInfoW(20, 0, path, 0)
-
-    def get_wallpaper(self):
-        ubuf = ctypes.create_unicode_buffer(512)
-        ctypes.windll.user32.SystemParametersInfoW(win32con.SPI_GETDESKWALLPAPER, len(ubuf), ubuf, 0)
-        name = os.path.basename(ubuf.value)
-        name = os.path.splitext(name)[0]
-        return name
 
     def check_net(self):
         try:
@@ -144,6 +138,8 @@ class SysFuncs:
             return True
         except requests.ConnectionError:
             return False
+
+
 
 
 if __name__ == '__main__':
