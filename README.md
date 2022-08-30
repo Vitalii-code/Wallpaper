@@ -5,6 +5,23 @@
  # Wallpaper
 This program can parse images for your desktop background 
 
+
+# Features
+- The image is selected specifically for your desktop resolution
+- Every image is unique
+
+# Download and usage
+You need [python](https://www.python.org/) to run this program.
+
+Then just run the "run.bat" for Windows or "run.sh" for Linux.
+
+# Supported os
+- Windows
+- Linux(kde, gnome)
+
+ 
+
+
 # Parsed images
 ![General 2000x1334 nature forest plants trees outdoors](https://user-images.githubusercontent.com/58048618/187077721-ce60aa71-76da-4712-94af-8d698ba64610.jpg)
 ![General 1920x1200 nature landscape lake trees sky mountains water](https://user-images.githubusercontent.com/58048618/187518506-76948fcc-f8a1-4ec5-a33c-451c772dd650.jpg)
