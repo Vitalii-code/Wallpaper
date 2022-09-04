@@ -1,4 +1,6 @@
 import os
+import subprocess
+
 from screeninfo import get_monitors
 import platform
 
@@ -22,13 +24,12 @@ def set_wallpaper(self, path):
         ctypes.windll.user32.SystemParametersInfoW(20, 0, path, 0)
 
     elif platform.system() == "Linux":
-        if os.environ.get('DESKTOP_SESSION') == "gnome":
-            os.system(f'/usr/bin/gsettings set org.gnome.desktop.background picture-uri "{path}"')
+        if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
+            os.system(f'gsettings set org.gnome.desktop.background picture-uri "{path}"')
 
-        elif os.environ.get('DESKTOP_SESSION') == "plasma":
-            string = """dbus-send --session --dest=org.kde.plasmashell --type=method_call /PlasmaShell org.kde.PlasmaShell.evaluateScript 'string: var Desktops = desktops();for (i=0;i<Desktops.length;i++) { d = Desktops[i]; d.wallpaperPlugin = "org.kde.image"; d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General"); d.writeConfig("Image", "file:///%s");}'"""
-            os.system(string % path)
-
+        elif os.environ.get('KDE_FULL_SESSION') == 'true':
+            command = """dbus-send --session --dest=org.kde.plasmashell --type=method_call /PlasmaShell org.kde.PlasmaShell.evaluateScript 'string: var Desktops = desktops();for (i=0;i<Desktops.length;i++) { d = Desktops[i]; d.wallpaperPlugin = "org.kde.image"; d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General"); d.writeConfig("Image", "%s");}'"""
+            os.system(command % path)
 
 
 def get_wallpaper(self):
@@ -38,8 +39,15 @@ def get_wallpaper(self):
         name = os.path.basename(ubuf.value)
         name = os.path.splitext(name)[0]
         return name
+
     elif platform.system() == "Linux":
-        if os.environ.get('DESKTOP_SESSION') == "gnome":
-            pass
-        elif os.environ.get('DESKTOP_SESSION') == "plasma":
-            pass
+
+        if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
+            name = subprocess.check_output(["gsettings get org.gnome.desktop.background picture-uri"], shell = True)
+            return name.decode("utf-8")
+
+        elif os.environ.get('KDE_FULL_SESSION') == 'true':
+            name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' --group 'org.kde.image' --group 'General' --key 'Image'"""], shell=True)
+            return name.decode("utf-8")
+
+        #xfce - "xfconf-query -c xfce4-desktop -p insert_property_here -s path/image"

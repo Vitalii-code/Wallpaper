@@ -109,7 +109,6 @@ class Buttons:
 
 class Parsing:
     def image_download(self, url, name):
-        print("downloaded")
         response = requests.get(url)
         file = open(imgFolder + os.path.basename(name) + ".jpg", "wb")
         file.write(response.content)

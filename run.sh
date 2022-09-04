@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pip install -r requirements.txt
-python main.pyw
+pip3 install -r requirements.txt
+python3 main.pyw
 
 
