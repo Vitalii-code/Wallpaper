@@ -26,6 +26,7 @@ def set_wallpaper(self, path):
     elif platform.system() == "Linux":
         if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
             os.system(f'gsettings set org.gnome.desktop.background picture-uri "{path}"')
+            os.system(f'gsettings set org.gnome.desktop.background picture-uri-dark "{path}"')
 
         elif os.environ.get('KDE_FULL_SESSION') == 'true':
             command = """dbus-send --session --dest=org.kde.plasmashell --type=method_call /PlasmaShell org.kde.PlasmaShell.evaluateScript 'string: var Desktops = desktops();for (i=0;i<Desktops.length;i++) { d = Desktops[i]; d.wallpaperPlugin = "org.kde.image"; d.currentConfigGroup = Array("Wallpaper", "org.kde.image", "General"); d.writeConfig("Image", "%s");}'"""
