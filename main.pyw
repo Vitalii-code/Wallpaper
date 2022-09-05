@@ -1,4 +1,5 @@
 # Cross-platform libs
+import platform
 import threading
 from PyQt6 import QtGui
 from PyQt6.QtGui import QIcon, QAction
@@ -9,20 +10,15 @@ import os
 import sys
 import osHooks
 
-
-
-
-
-
 # imgFolder = os.getenv("temp")
 # imgFolder = imgFolder + "\\Wallpapers\\"
 
 imgList = []
 imgFolder = os.getcwd()
-if os.uname().sysname == "Linux":
+if platform.system() == "Linux":
     imgFolder = imgFolder + "/imgs/"
 
-elif os.uname().sysname == "Windows":
+elif platform.system() == "Windows":
     imgFolder = imgFolder + "\\imgs\\"
 else:
     imgFolder = imgFolder + "/imgs/"
@@ -36,6 +32,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         # Add current wallpaper to list
         name = osHooks.get_wallpaper(self)
+        print(name)
         imgList.append(name)
         self.initUI()
 
@@ -94,6 +91,7 @@ class Buttons:
         Parsing.image_download(self, url, name)
         osHooks.set_wallpaper(self, imgFolder + name + ".jpg")
         imgList.append(name)
+        print(imgList)
 
 
     def prev_image(self):
@@ -102,6 +100,7 @@ class Buttons:
             imgList.pop()
             if imgList[-1] != "None":
                 osHooks.set_wallpaper(self, imgFolder + str(imgList[-1]) + ".jpg")
+        print(imgList)
 
 
 # class SysFuncs:

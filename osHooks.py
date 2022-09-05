@@ -33,6 +33,11 @@ def set_wallpaper(self, path):
             os.system(command % path)
 
 
+        elif os.environ.get('DESKTOP_SESSION') == "xfce":
+            os.system(f'xfconf-query --channel xfce4-desktop --property /backdrop/screen0/monitor0/image-path --set {path}')
+
+
+
 def get_wallpaper(self):
     if platform.system() == "Windows":
         ubuf = ctypes.create_unicode_buffer(512)
@@ -51,4 +56,7 @@ def get_wallpaper(self):
             name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' --group 'org.kde.image' --group 'General' --key 'Image'"""], shell=True)
             return name.decode("utf-8")
 
+
+
         #xfce - "xfconf-query -c xfce4-desktop -p insert_property_here -s path/image"
+        #macos - "osascript -e ‘tell application “Finder” to set desktop image to POSIX file “~ / Desktop / cabo-san-lucas.jpg”‘"
