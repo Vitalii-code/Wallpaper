@@ -5,10 +5,10 @@ from screeninfo import get_monitors
 import platform
 
 
-if platform.system == "Linux":
+if platform.system() == "Linux":
     pass
 
-elif platform.system == "Windows":
+elif platform.system() == "Windows":
     import win32.lib.win32con as win32con
     import ctypes
 else:
