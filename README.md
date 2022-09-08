@@ -9,6 +9,7 @@ This program can parse images for your desktop background
 # Features
 - The image is selected specifically for your desktop resolution
 - Every image is unique
+- Cross-platform
 
 # Download and usage
 You need [python](https://www.python.org/) to run this program.
