@@ -34,7 +34,7 @@ def set_wallpaper(self, path):
 
 
         elif os.environ.get('DESKTOP_SESSION') == "xfce":
-            os.system(f'xfconf-query --channel xfce4-desktop --property /backdrop/screen0/monitor0/image-path --set {path}')
+            os.system(f'xfconf-query -c xfce4-desktop -p  /backdrop/screen0/monitor0/workspace0/last-image -s "{path}"')
 
 
 
@@ -51,6 +51,7 @@ def get_wallpaper(self):
         if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
             name = subprocess.check_output(["gsettings get org.gnome.desktop.background picture-uri"], shell = True)
             return name.decode("utf-8")
+
 
         elif os.environ.get('KDE_FULL_SESSION') == 'true':
             name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' --group 'org.kde.image' --group 'General' --key 'Image'"""], shell=True)

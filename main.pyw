@@ -32,7 +32,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         # Add current wallpaper to list
         name = osHooks.get_wallpaper(self)
-        print(name)
         imgList.append(name)
         self.initUI()
 
@@ -91,7 +90,7 @@ class Buttons:
         Parsing.image_download(self, url, name)
         osHooks.set_wallpaper(self, imgFolder + name + ".jpg")
         imgList.append(name)
-        print(imgList)
+
 
 
     def prev_image(self):
@@ -100,7 +99,7 @@ class Buttons:
             imgList.pop()
             if imgList[-1] != "None":
                 osHooks.set_wallpaper(self, imgFolder + str(imgList[-1]) + ".jpg")
-        print(imgList)
+
 
 
 # class SysFuncs:
