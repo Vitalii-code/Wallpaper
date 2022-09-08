@@ -1,5 +1,5 @@
 @echo off
-echo "[Wallpaper] Loading..."
+echo [Wallpaper] Loading...
 
 python -m venv venv
 venv\Scripts\pip.exe install -r requirements\windows_requirements.txt
