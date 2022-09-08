@@ -1,4 +1,4 @@
-echo on 
+echo off
 echo "[Wallpaper] Loading..."
 
 python -m venv venv
