@@ -3,7 +3,7 @@
  </p>
  
  # Wallpaper
-This program can parse images for your desktop background 
+This program can download images for your desktop background 
 
 
 # Features
