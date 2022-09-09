@@ -17,7 +17,7 @@ You need [python](https://www.python.org/) to run this program.
 Then just run the "run.bat" for Windows or "run.sh" for Linux.
 
 # Supported os
-- Windows(10, maybe 11, 7 is officially not supported - but you can try)
+- Windows(10, 11, 7 is officially not supported - but you can try)
 - Linux(kde, gnome, xfce in development)
 - MacOS is in development
 

@@ -50,12 +50,13 @@ def get_wallpaper(self):
 
         if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
             name = subprocess.check_output(["gsettings get org.gnome.desktop.background picture-uri"], shell = True)
-            return name.decode("utf-8")
+            return name.decode("utf-8").replace("'", "")
+
 
 
         elif os.environ.get('KDE_FULL_SESSION') == 'true':
             name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' --group 'org.kde.image' --group 'General' --key 'Image'"""], shell=True)
-            return name.decode("utf-8")
+            return name.decode("utf-8").replace("'", "")
 
 
 
