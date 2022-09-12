@@ -7,7 +7,7 @@ echo [Wallpaper] Loading...
 	echo Python is not installed
 	
 	
-	set /p ask="Do you want to install Python? [Yes, No]:"
+	set /p ask="[Wallpaper] Do you want to install Python? [Yes, No]:"
 	if %ask% == "Yes"(
 		echo Installing Python...
 		[CmdletBinding()] Param(
@@ -20,7 +20,7 @@ echo [Wallpaper] Loading...
 		(New-Object Net.WebClient).DownloadFile($pythonUrl, $pythonDownloadPath)
 		& $pythonDownloadPath /quiet InstallAllUsers=1 PrependPath=1 Include_test=0 TargetDir=$pythonInstallDir
 		if ($LASTEXITCODE -ne 0) {
-			throw "The python installer at '$pythonDownloadPath' exited with error code '$LASTEXITCODE'"
+			throw "[Wallpaper] The python installer at '$pythonDownloadPath' exited with error code '$LASTEXITCODE'"
 		}
 
 		[Environment]::SetEnvironmentVariable("PATH", "${env:path};${pythonInstallDir}", "Machine")
