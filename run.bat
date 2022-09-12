@@ -8,7 +8,7 @@ echo [Wallpaper] Loading...
 	
 	
 	set /p ask="Do you want to install Python? [Yes, No]:"
-	if (%ask%) == "Yes"{
+	if "%ask%" == "Yes"{
 		echo Installing Python...
 		[CmdletBinding()] Param(
 			$pythonVersion = "3.10.7"
