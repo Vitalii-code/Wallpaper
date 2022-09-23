@@ -8,10 +8,9 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import sys
+sys.path.append('src/')
 import osHooks
 
-# imgFolder = os.getenv("temp")
-# imgFolder = imgFolder + "\\Wallpapers\\"
 
 imgList = []
 imgFolder = os.getcwd()
