@@ -1,9 +1,7 @@
 import os
 import subprocess
-
 from screeninfo import get_monitors
 import platform
-
 
 if platform.system() == "Linux":
     pass
@@ -18,6 +16,7 @@ else:
 def get_resolution(self):
     for m in get_monitors():
         return m.width, m.height
+
 
 def set_wallpaper(self, path):
     if platform.system() == "Windows":
@@ -37,7 +36,6 @@ def set_wallpaper(self, path):
             os.system(f'xfconf-query -c xfce4-desktop -p  /backdrop/screen0/monitor0/workspace0/last-image -s "{path}"')
 
 
-
 def get_wallpaper(self):
     if platform.system() == "Windows":
         ubuf = ctypes.create_unicode_buffer(512)
@@ -47,18 +45,32 @@ def get_wallpaper(self):
         return name
 
     elif platform.system() == "Linux":
-
         if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
-            name = subprocess.check_output(["gsettings get org.gnome.desktop.background picture-uri"], shell = True)
-            return name.decode("utf-8").replace("'", "")
+            name = subprocess.check_output(["gsettings get org.gnome.desktop.background picture-uri"], shell=True)
 
+            return decode_string_from_terminal(name)
 
 
         elif os.environ.get('KDE_FULL_SESSION') == 'true':
-            name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' --group 'org.kde.image' --group 'General' --key 'Image'"""], shell=True)
-            return name.decode("utf-8").replace("'", "")
+            name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop
+                                               -appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' 
+                                               --group 'org.kde.image' --group 'General' --key 'Image'"""],
+                                           shell=True)
+
+            return decode_string_from_terminal(name)
 
 
 
-        #xfce - "xfconf-query -c xfce4-desktop -p insert_property_here -s path/image"
-        #macos - "osascript -e ‘tell application “Finder” to set desktop image to POSIX file “~ / Desktop / cabo-san-lucas.jpg”‘"
+        # xfce - "xfconf-query -c xfce4-desktop -p insert_property_here -s path/image"
+        # macos - "osascript -e ‘tell application “Finder” to set desktop image to POSIX file “~ / Desktop / cabo-san-lucas.jpg”‘"
+
+def decode_string_from_terminal(name):
+    try:
+        name = name.decode(encoding='UTF-8')
+        name = name.replace("%20", " ")
+        name = name.replace("'", "")
+        name = name.rstrip('\n')
+        name = name.split('file://')[1]
+    except:
+        pass
+    return name

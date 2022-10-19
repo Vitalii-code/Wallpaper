@@ -8,9 +8,9 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import sys
+
 sys.path.append('src/')
 import osHooks
-
 
 imgList = []
 imgFolder = os.getcwd()
@@ -31,14 +31,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         # Add current wallpaper to list
         name = osHooks.get_wallpaper(self)
-        name = os.path.basename(name)
+        print(name)
         imgList.append(name)
 
         self.initUI()
 
-
     def initUI(self):
-
         # TrayIcon
         self.tray = QSystemTrayIcon(self)
         self.tray.setIcon(QIcon("icons/ico.ico"))
@@ -49,8 +47,6 @@ class MainWindow(QMainWindow):
         self.nextImage = QAction("Next image")
         self.prevImage = QAction("Previous image")
         self.quit = QAction("Quit")
-
-
 
         self.nextImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-next")))
         self.prevImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-previous")))
@@ -66,45 +62,26 @@ class MainWindow(QMainWindow):
 
         self.tray.setContextMenu(self.menu)
 
-        #Debug window
-
-        # layout = QVBoxLayout()
-        # self.label = QLabel()
-        # self.movie = QMovie("icons/gif.gif")
-        # self.label.setMovie(self.movie)
-        # self.movie.start()
-        # layout.addWidget(self.label)
-        # widget = QWidget()
-        # widget.setLayout(layout)
-        # self.setCentralWidget(widget)
-        # self.show()
-
 
 
 class Buttons:
     def next_image(self):
-        x = threading.Thread(target=Buttons.next_image_thread, args=(self, ))
+        x = threading.Thread(target=Buttons.next_image_thread, args=(self,))
         x.start()
 
     def next_image_thread(self):
         url, name = Parsing.get_image_url(self)
         Parsing.image_download(self, url, name)
-        osHooks.set_wallpaper(self, imgFolder + name + ".jpg")
+        osHooks.set_wallpaper(self, name + ".jpg")
         imgList.append(name)
-
 
     def prev_image(self):
         if len(imgList) > 1:
-            os.remove("imgs/" + imgList[-1] + ".jpg")
+            os.remove(imgList[-1] + ".jpg")
             imgList.pop()
             if imgList[-1] != "None":
-                osHooks.set_wallpaper(self, imgFolder + str(imgList[-1]) + ".jpg")
+                osHooks.set_wallpaper(self, imgList[-1])
 
-
-
-
-# class SysFuncs:
-#
 
 class Parsing:
     def image_download(self, url, name):
@@ -127,8 +104,7 @@ class Parsing:
             width, height = osHooks.get_resolution(self)
             if int(parsed['data-wallpaper-width']) >= int(width) and int(parsed['data-wallpaper-height']) >= int(
                     height):
-                return parsed["src"], parsed["alt"]
-
+                return parsed["src"], imgFolder + parsed["alt"]
 
     def check_net(self):
         try:
@@ -136,8 +112,6 @@ class Parsing:
             return True
         except requests.ConnectionError:
             return False
-
-
 
 
 if __name__ == '__main__':
