@@ -40,14 +40,14 @@ def get_wallpaper(self):
     if platform.system() == "Windows":
         ubuf = ctypes.create_unicode_buffer(512)
         ctypes.windll.user32.SystemParametersInfoW(win32con.SPI_GETDESKWALLPAPER, len(ubuf), ubuf, 0)
-        name = os.path.basename(ubuf.value)
+        name = ubuf.value
         name = os.path.splitext(name)[0]
+        name = name+".jpg"
         return name
 
     elif platform.system() == "Linux":
         if os.environ.get('GNOME_DESKTOP_SESSION_ID'):
             name = subprocess.check_output(["gsettings get org.gnome.desktop.background picture-uri"], shell=True)
-
             return decode_string_from_terminal(name)
 
 
@@ -56,7 +56,6 @@ def get_wallpaper(self):
                                                -appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' 
                                                --group 'org.kde.image' --group 'General' --key 'Image'"""],
                                            shell=True)
-
             return decode_string_from_terminal(name)
 
 
