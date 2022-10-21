@@ -1,9 +1,10 @@
 # Cross-platform libs
 import platform
 import threading
+from configparser import ConfigParser
 from PyQt6 import QtGui
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QStyle
+from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QStyle, QMessageBox
 from bs4 import BeautifulSoup
 import requests
 import os
@@ -12,8 +13,11 @@ import sys
 sys.path.append('src/')
 import osHooks
 
+config = ConfigParser()
+
 imgList = []
 imgFolder = os.getcwd()
+
 if platform.system() == "Linux":
     imgFolder = imgFolder + "/imgs/"
 
@@ -62,6 +66,19 @@ class MainWindow(QMainWindow):
 
         self.tray.setContextMenu(self.menu)
 
+        # creating start dialog
+        config.read('config.ini')
+        if config.has_section('settings') and config['settings']['startup_dialog'] == "False":
+            pass
+        else:
+            message = QMessageBox.information(self, "Wallpaper", "The program must be in tray")
+            if message.Ok:
+                if not config.has_section("settings"):
+                    config.add_section("settings")
+                config.set("settings", "startup_dialog", "False")
+                with open("config.ini", 'w') as configfile:
+                    config.write(configfile)
+
 
 
 class Buttons:
@@ -73,8 +90,8 @@ class Buttons:
         url, name = Parsing.get_image_url(self)
         Parsing.image_download(self, url, name)
         osHooks.set_wallpaper(self, name + ".jpg")
-        imgList.append(name+".jpg")
-        print(imgList)
+        imgList.append(name + ".jpg")
+        print(name + ".jpg")
 
     def prev_image(self):
         if len(imgList) > 1:
@@ -82,9 +99,7 @@ class Buttons:
             imgList.pop()
             if imgList[-1] != "None":
                 osHooks.set_wallpaper(self, imgList[-1])
-        print(imgList)
-
-            
+            print(imgList[-1])
 
 
 class Parsing:
