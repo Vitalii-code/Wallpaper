@@ -73,14 +73,18 @@ class Buttons:
         url, name = Parsing.get_image_url(self)
         Parsing.image_download(self, url, name)
         osHooks.set_wallpaper(self, name + ".jpg")
-        imgList.append(name)
+        imgList.append(name+".jpg")
+        print(imgList)
 
     def prev_image(self):
         if len(imgList) > 1:
-            os.remove(imgList[-1] + ".jpg")
+            os.remove(imgList[-1])
             imgList.pop()
             if imgList[-1] != "None":
                 osHooks.set_wallpaper(self, imgList[-1])
+        print(imgList)
+
+            
 
 
 class Parsing:
