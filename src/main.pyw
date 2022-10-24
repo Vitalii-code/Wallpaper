@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        self.setWindowIcon("icons/ico.ico")
         # TrayIcon
         self.tray = QSystemTrayIcon(self)
         self.tray.setIcon(QIcon("icons/ico.ico"))
