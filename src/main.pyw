@@ -4,23 +4,19 @@ from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QStyle, QMessageBox
 from bs4 import BeautifulSoup
 import requests
-from desktop_notifier import DesktopNotifier
-import asyncio
+from notifypy import Notify
 # Python libs
 import os
 import sys
-from os.path import basename, abspath
+from os.path import basename
 from configparser import ConfigParser
 import platform
 import threading
-
-
 
 sys.path.append('src/')
 import osHooks
 
 config = ConfigParser()
-notifier = DesktopNotifier()
 
 imgList = []
 imgFolder = os.getcwd()
@@ -96,7 +92,8 @@ class Buttons:
         Parsing.image_download(self, url, name)
         osHooks.set_wallpaper(self, name + ".jpg")
         imgList.append(name + ".jpg")
-        notifier.send_sync(title="Wallpaper", message=basename(name), icon=abspath("icons/ico.ico"))
+        notification = Notify("Wallpaper", f"{basename(name)}", default_notification_icon="icons/ico.ico")
+        notification.send()
 
     def prev_image(self):
         if len(imgList) > 1:
@@ -104,7 +101,9 @@ class Buttons:
             imgList.pop()
             if imgList[-1] != "None":
                 osHooks.set_wallpaper(self, imgList[-1])
-                notifier.send_sync(title="Wallpaper", message=basename(imgList[-1]), icon=abspath("icons/ico.ico"))
+                notification = Notify("Wallpaper", f"{basename(imgList[-1])}",
+                                      default_notification_icon="icons/ico.ico")
+                notification.send()
 
 
 class Parsing:
