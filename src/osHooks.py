@@ -42,7 +42,7 @@ def get_wallpaper(self):
         ctypes.windll.user32.SystemParametersInfoW(win32con.SPI_GETDESKWALLPAPER, len(ubuf), ubuf, 0)
         name = ubuf.value
         name = os.path.splitext(name)[0]
-        name = name+".jpg"
+        name = name + ".jpg"
         return name
 
     elif platform.system() == "Linux":
@@ -58,10 +58,9 @@ def get_wallpaper(self):
                                            shell=True)
             return decode_string_from_terminal(name)
 
-
-
         # xfce - "xfconf-query -c xfce4-desktop -p insert_property_here -s path/image"
         # macos - "osascript -e ‘tell application “Finder” to set desktop image to POSIX file “~ / Desktop / cabo-san-lucas.jpg”‘"
+
 
 def decode_string_from_terminal(name):
     try:

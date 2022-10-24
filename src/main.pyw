@@ -1,14 +1,17 @@
 # Cross-platform libs
-import platform
-import threading
-from configparser import ConfigParser
 from PyQt6 import QtGui
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QStyle, QMessageBox
 from bs4 import BeautifulSoup
 import requests
+from notifypy import Notify
+# Python libs
 import os
 import sys
+from os.path import basename
+from configparser import ConfigParser
+import platform
+import threading
 
 sys.path.append('src/')
 import osHooks
@@ -35,7 +38,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         # Add current wallpaper to list
         name = osHooks.get_wallpaper(self)
-        print(name)
         imgList.append(name)
 
         self.initUI()
@@ -80,7 +82,6 @@ class MainWindow(QMainWindow):
                     config.write(configfile)
 
 
-
 class Buttons:
     def next_image(self):
         x = threading.Thread(target=Buttons.next_image_thread, args=(self,))
@@ -91,7 +92,8 @@ class Buttons:
         Parsing.image_download(self, url, name)
         osHooks.set_wallpaper(self, name + ".jpg")
         imgList.append(name + ".jpg")
-        print(name + ".jpg")
+        notification = Notify("Wallpaper", f"{basename(name)}", default_notification_icon="icons/ico.ico")
+        notification.send()
 
     def prev_image(self):
         if len(imgList) > 1:
@@ -99,13 +101,15 @@ class Buttons:
             imgList.pop()
             if imgList[-1] != "None":
                 osHooks.set_wallpaper(self, imgList[-1])
-            print(imgList[-1])
+                notification = Notify("Wallpaper", f"{basename(imgList[-1])}",
+                                      default_notification_icon="icons/ico.ico")
+                notification.send()
 
 
 class Parsing:
     def image_download(self, url, name):
         response = requests.get(url)
-        file = open(imgFolder + os.path.basename(name) + ".jpg", "wb")
+        file = open(imgFolder + basename(name) + ".jpg", "wb")
         file.write(response.content)
         file.close()
 

@@ -4,5 +4,6 @@ beautifulsoup4<=4.11.1
 lxml<=4.9.1 
 screeninfo<=0.8.1
 pywin32<=304
+notify-py<=0.3.3 
 
 
