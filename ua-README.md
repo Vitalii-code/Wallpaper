@@ -1,5 +1,5 @@
  <div align="center">
-    Read the documentation in: 
+    Читай документацію в: 
     <br>
     <a href="https://github.com/Vitalya-code/Wallpaper/blob/main/README.md">[English]</a>
     <a href="https://github.com/Vitalya-code/Wallpaper/blob/main/ua-README.md">[Українська]</a>
