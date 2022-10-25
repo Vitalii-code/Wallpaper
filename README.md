@@ -1,7 +1,7 @@
  <div align="center">
     Read the documentation in: 
     <br>
-    <a href="https://github.com/Soundux/Soundux/blob/master/README.md">[English]</a>
+    <a href="https://github.com/Vitalya-code/Wallpaper/blob/master/README.md">[English]</a>
     <a href="https://github.com/Vitalya-code/Wallpaper/blob/master/ua-README.md">[Українська]</a>
  </div> 
  
