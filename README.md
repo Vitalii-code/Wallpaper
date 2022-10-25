@@ -1,8 +1,8 @@
  <div align="center">
     Read the documentation in: 
     <br>
-    <a href="https://github.com/Vitalya-code/Wallpaper/blob/master/README.md">[English]</a>
-    <a href="https://github.com/Vitalya-code/Wallpaper/blob/master/ua-README.md">[Українська]</a>
+    <a href="https://github.com/Vitalya-code/Wallpaper/blob/main/README.md">[English]</a>
+    <a href="https://github.com/Vitalya-code/Wallpaper/blob/main/ua-README.md">[Українська]</a>
  </div> 
  
  <p align="center"> 
