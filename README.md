@@ -1,8 +1,21 @@
+ <div align="center">
+    Read the documentation in: 
+    <br>
+    <a href="https://github.com/Soundux/Soundux/blob/master/README.md">[English]</a>
+    <a href="https://github.com/Vitalya-code/Wallpaper/blob/master/ua-README.md">[Українська]</a>
+ </div> 
+ 
  <p align="center"> 
      <img src="icons/ico.ico" width=160 height=160 >
+     
  </p>
  
+
+
+
+ 
  # Wallpaper
+
 This program can download images for your desktop background 
 
 
