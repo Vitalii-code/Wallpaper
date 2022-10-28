@@ -12,15 +12,11 @@ from os.path import basename
 from configparser import ConfigParser
 import platform
 import threading
-
+# custom libs
 sys.path.append('src/')
 import osHooks
 
-config = ConfigParser()
-
-imgList = []
 imgFolder = os.getcwd()
-
 if platform.system() == "Linux":
     imgFolder = imgFolder + "/imgs/"
 
@@ -36,13 +32,14 @@ if not os.path.exists(imgFolder):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        imgList = []
         # Add current wallpaper to list
         name = osHooks.get_wallpaper(self)
         imgList.append(name)
+        self.initUI(imgList)
 
-        self.initUI()
-
-    def initUI(self):
+    def initUI(self, imgList):
         self.setWindowIcon(QIcon("icons/ico.ico"))
         # TrayIcon
         self.tray = QSystemTrayIcon(self)
@@ -59,8 +56,9 @@ class MainWindow(QMainWindow):
         self.prevImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-previous")))
         self.quit.setIcon(QIcon(QtGui.QIcon.fromTheme("window-close")))
 
-        self.nextImage.triggered.connect(Buttons.next_image)
-        self.prevImage.triggered.connect(Buttons.prev_image)
+        
+        self.nextImage.triggered.connect(lambda: threading.Thread(target=Buttons.next_image, args=(self, imgList)).start())
+        self.prevImage.triggered.connect(lambda: Buttons.prev_image(self, imgList))
         self.quit.triggered.connect(app.quit)
 
         self.menu.addAction(self.nextImage)
@@ -70,6 +68,7 @@ class MainWindow(QMainWindow):
         self.tray.setContextMenu(self.menu)
 
         # creating start dialog
+        config = ConfigParser()
         config.read('config.ini')
         if config.has_section('settings') and config['settings']['startup_dialog'] == "False":
             pass
@@ -84,37 +83,40 @@ class MainWindow(QMainWindow):
 
 
 class Buttons:
-    def next_image(self):
-        x = threading.Thread(target=Buttons.next_image_thread, args=(self,))
-        x.start()
+    def next_image(self, imgList):
+        if Parsing.check_net():
+            url, name = Parsing.get_image_url(self)
+            Parsing.image_download(self, url, name)
+            osHooks.set_wallpaper(self, name + ".jpg")
+            imgList.append(name + ".jpg")
+            Notify("Wallpaper", basename(name), default_notification_icon="icons/ico.ico").send()
+        else:
+            QMessageBox.critical(self, "Wallpaper", "No internet connection")
+            
+            
+        
+        
 
-    def next_image_thread(self):
-        url, name = Parsing.get_image_url(self)
-        Parsing.image_download(self, url, name)
-        osHooks.set_wallpaper(self, name + ".jpg")
-        imgList.append(name + ".jpg")
-        notification = Notify("Wallpaper", f"{basename(name)}", default_notification_icon="icons/ico.ico")
-        notification.send()
-
-    def prev_image(self):
+    def prev_image(self, imgList):
         if len(imgList) > 1:
             os.remove(imgList[-1])
             imgList.pop()
             if imgList[-1] != "None":
                 osHooks.set_wallpaper(self, imgList[-1])
-                notification = Notify("Wallpaper", f"{basename(imgList[-1])}",
-                                      default_notification_icon="icons/ico.ico")
-                notification.send()
+                Notify("Wallpaper", basename(imgList[-1]),
+                                    default_notification_icon="icons/ico.ico").send()
+       
+             
 
 
-class Parsing:
+class Parsing:        
     def image_download(self, url, name):
         response = requests.get(url)
         file = open(imgFolder + basename(name) + ".jpg", "wb")
         file.write(response.content)
         file.close()
 
-    def get_image_url(self):
+    def get_image_url(self): 
         url = "https://wallhaven.cc/search?q=id:37&sorting=random&ref=fp"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'lxml')
@@ -129,8 +131,9 @@ class Parsing:
             if int(parsed['data-wallpaper-width']) >= int(width) and int(parsed['data-wallpaper-height']) >= int(
                     height):
                 return parsed["src"], imgFolder + parsed["alt"]
+            
 
-    def check_net(self):
+    def check_net():
         try:
             requests.get("http://www.google.com")
             return True
