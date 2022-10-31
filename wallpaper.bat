@@ -28,5 +28,3 @@ if not exist "python\" (
 
 python\Scripts\pip.exe install -r requirements\windows_requirements.txt
 start python\pythonw.exe src\main.pyw
-
-echo [Wallpaper] The program must be in tray

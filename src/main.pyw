@@ -1,148 +1,45 @@
-# Cross-platform libs
-from PyQt6 import QtGui
-from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QStyle, QMessageBox
-from bs4 import BeautifulSoup
-import requests
-from notifypy import Notify
-# Python libs
-import os
+import gui
 import sys
-from os.path import basename
-from configparser import ConfigParser
-import platform
-import threading
-# custom libs
-sys.path.append('src/')
-import osHooks
+import downloader
 
-imgFolder = os.getcwd()
-if platform.system() == "Linux":
-    imgFolder = imgFolder + "/imgs/"
-
-elif platform.system() == "Windows":
-    imgFolder = imgFolder + "\\imgs\\"
-else:
-    imgFolder = imgFolder + "/imgs/"
-
-if not os.path.exists(imgFolder):
-    os.mkdir(imgFolder)
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        imgList = []
-        # Add current wallpaper to list
-        name = osHooks.get_wallpaper(self)
-        imgList.append(name)
-        self.initUI(imgList)
-
-    def initUI(self, imgList):
-        self.setWindowIcon(QIcon("icons/ico.ico"))
-        # TrayIcon
-        self.tray = QSystemTrayIcon(self)
-        self.tray.setIcon(QIcon("icons/ico.ico"))
-        self.tray.setVisible(True)
-
-        # trayMenu
-        self.menu = QMenu(self)
-        self.nextImage = QAction("Next image")
-        self.prevImage = QAction("Previous image")
-        self.quit = QAction("Quit")
-
-        self.nextImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-next")))
-        self.prevImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-previous")))
-        self.quit.setIcon(QIcon(QtGui.QIcon.fromTheme("window-close")))
-
-        
-        self.nextImage.triggered.connect(lambda: threading.Thread(target=Buttons.next_image, args=(self, imgList)).start())
-        self.prevImage.triggered.connect(lambda: Buttons.prev_image(self, imgList))
-        self.quit.triggered.connect(app.quit)
-
-        self.menu.addAction(self.nextImage)
-        self.menu.addAction(self.prevImage)
-        self.menu.addAction(self.quit)
-
-        self.tray.setContextMenu(self.menu)
-
-        # creating start dialog
-        config = ConfigParser()
-        config.read('config.ini')
-        if config.has_section('settings') and config['settings']['startup_dialog'] == "False":
-            pass
-        else:
-            message = QMessageBox.information(self, "Wallpaper", "The program must be in tray")
-            if message.Ok:
-                if not config.has_section("settings"):
-                    config.add_section("settings")
-                config.set("settings", "startup_dialog", "False")
-                with open("config.ini", 'w') as configfile:
-                    config.write(configfile)
-
-
-class Buttons:
-    def next_image(self, imgList):
-        if Parsing.check_net():
-            url, name = Parsing.get_image_url(self)
-            Parsing.image_download(self, url, name)
-            osHooks.set_wallpaper(self, name + ".jpg")
-            imgList.append(name + ".jpg")
-            Notify("Wallpaper", basename(name), default_notification_icon="icons/ico.ico").send()
-        else:
-            QMessageBox.critical(self, "Wallpaper", "No internet connection")
-            
-            
-        
-        
-
-    def prev_image(self, imgList):
-        if len(imgList) > 1:
-            os.remove(imgList[-1])
-            imgList.pop()
-            if imgList[-1] != "None":
-                osHooks.set_wallpaper(self, imgList[-1])
-                Notify("Wallpaper", basename(imgList[-1]),
-                                    default_notification_icon="icons/ico.ico").send()
-       
-             
-
-
-class Parsing:        
-    def image_download(self, url, name):
-        response = requests.get(url)
-        file = open(imgFolder + basename(name) + ".jpg", "wb")
-        file.write(response.content)
-        file.close()
-
-    def get_image_url(self): 
-        url = "https://wallhaven.cc/search?q=id:37&sorting=random&ref=fp"
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'lxml')
-        quotes = soup.find_all('a', class_="preview")
-
-        for i in quotes:
-            url = requests.get(i['href'])
-            soup = BeautifulSoup(url.text, 'lxml')
-            parsed = soup.find('img', id="wallpaper")
-
-            width, height = osHooks.get_resolution(self)
-            if int(parsed['data-wallpaper-width']) >= int(width) and int(parsed['data-wallpaper-height']) >= int(
-                    height):
-                return parsed["src"], imgFolder + parsed["alt"]
-            
-
-    def check_net():
-        try:
-            requests.get("http://www.google.com")
-            return True
-        except requests.ConnectionError:
-            return False
-
+helpStr = """
+    Usage: wallpaper.sh [option] number
+    
+    Example:
+    wallpaper.sh - without arguments starting gui
+    wallpaper.sh -r 1024x800 5
+    wallpaper.sh 2
+    
+    Number is amount of images that you need
+    
+    [option]
+    -r , --resolution = set the resolution of image(default is resolution of your main monitor)
+    -h , --help = display this help and exit
+"""
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    app.setQuitOnLastWindowClosed(False)
-    window = MainWindow()
-    sys.exit(app.exec())
+    try:
+        args = sys.argv
+        args.pop(0)  # removing first useless argument
+        if len(args) == 0:  # if no arguments then run gui
+            print("[Wallpaper] The program must be in tray")
+            gui.run()
+        else:
+            for i, arg in enumerate(args):
+                if arg == "--help" or arg == "-h":  # if args have help then show help and break
+                    print(helpStr)
+                    break
+                elif arg == "--resolution" or arg == "-r":
+                    resolution = args[i+1].split("x")  # saving resolution
+                    break
+                
+
+                    
+            for i in range(0, int(args[-1])):
+                url, name = downloader.get_image_url(resolution[0], resolution[1])
+                downloader.image_download(url, name)
+                print(name)
+    except:
+        print("Bad arguments")
+
+        

@@ -13,12 +13,12 @@ else:
     pass
 
 
-def get_resolution(self):
+def get_resolution():
     for m in get_monitors():
         return m.width, m.height
 
 
-def set_wallpaper(self, path):
+def set_wallpaper(path):
     if platform.system() == "Windows":
         ctypes.windll.user32.SystemParametersInfoW(20, 0, path, 0)
 
@@ -36,7 +36,7 @@ def set_wallpaper(self, path):
             os.system(f'xfconf-query -c xfce4-desktop -p  /backdrop/screen0/monitor0/workspace0/last-image -s "{path}"')
 
 
-def get_wallpaper(self):
+def get_wallpaper():
     if platform.system() == "Windows":
         ubuf = ctypes.create_unicode_buffer(512)
         ctypes.windll.user32.SystemParametersInfoW(win32con.SPI_GETDESKWALLPAPER, len(ubuf), ubuf, 0)

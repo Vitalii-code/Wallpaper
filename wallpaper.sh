@@ -13,7 +13,6 @@ else
 fi
 
 
-python3 -m virtualenv venv # creating venv
-venv/bin/pip3 install -r requirements/linux_requirements.txt # installing requirements
-echo -e "\n[Wallpaper] The program must be in tray"
-venv/bin/python3 src/main.pyw
+python3 -m virtualenv -q venv # creating venv
+venv/bin/pip3 install -q -r requirements/linux_requirements.txt # installing requirements
+venv/bin/python3 src/main.pyw $@
