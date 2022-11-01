@@ -1,5 +1,6 @@
-import gui
 import sys
+sys.path.append('src/')
+import gui
 import downloader
 from osHooks import resolution
 
@@ -19,9 +20,7 @@ helpStr = """
 """
 
 if __name__ == '__main__':
-    
     args = sys.argv
-    
     if len(args) == 1:  # if no arguments then run gui
         print("[Wallpaper] The program must be in tray")   
         gui.run()
