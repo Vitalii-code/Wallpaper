@@ -23,7 +23,7 @@ This program can download images for your desktop background
 - Cross-platform
 
 # Download and usage
-Just run the "run.bat" for Windows or "run.sh" for Linux.
+Just run the "wallpaper.bat" for Windows or "wallpaper.sh" for Linux.
 
 # Supported os
 - Windows(10, 11)
