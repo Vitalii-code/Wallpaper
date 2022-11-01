@@ -26,5 +26,5 @@ if not exist "python\" (
 )
 
 
-python\Scripts\pip.exe install -r requirements\windows_requirements.txt
-start python\pythonw.exe src\main.pyw
+python\Scripts\pip.exe  install -r -q requirements\windows_requirements.txt
+start python\pythonw.exe src\main.pyw %*
