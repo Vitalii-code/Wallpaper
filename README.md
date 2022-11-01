@@ -25,6 +25,19 @@ This program can download images for your desktop background
 # Download and usage
 Just run the "wallpaper.bat" for Windows or "wallpaper.sh" for Linux.
 
+# Terminal commands
+    Usage: wallpaper.sh [option] number
+    Example:
+    wallpaper.sh - without arguments starting gui
+    wallpaper.sh -r 1024x800 5
+    wallpaper.sh 2
+    
+    Number is amount of images that you need
+    
+    [option]
+    -r , --resolution = set the resolution of image(default is resolution of your main monitor)
+    -h , --help = display this help and exit
+
 # Supported os
 - Windows(10, 11)
 - Linux(kde, gnome, xfce in development)
