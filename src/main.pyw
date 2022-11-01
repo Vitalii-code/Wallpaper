@@ -1,6 +1,7 @@
 import gui
 import sys
 import downloader
+from osHooks import resolution
 
 helpStr = """
     Usage: wallpaper.sh [option] number
@@ -32,19 +33,16 @@ if __name__ == '__main__':
                 exit()
             elif arg == "--resolution" or arg == "-r":
                 resolution  = args[i+1].split("x")  # saving resolution
-                width=resolution[0]
-                height=resolution[1]
-                for i in range(0, int(args[-1])):
-                    url, name = downloader.get_image_url(width, height)
-                    downloader.image_download(url, name)
-                    print(name)
                 break
             else:
-                for i in range(0, int(args[-1])):
-                    url, name = downloader.get_image_url()
-                    downloader.image_download(url, name)
-                    print(name)
+                resolution = resolution().get()
                 break
+        
+        
+        for i in range(0, int(args[-1])):
+            url, name = downloader.get_image_url(resolution[0], resolution[1])
+            downloader.image_download(url, name)
+            print(name)
                 
         
 

@@ -13,18 +13,18 @@ else:
     pass
 
 
-class get_resolution:
-    def with_and_height():
+class resolution():
+    def get(self):
         for m in get_monitors():
             return m.width, m.height
 
     def width():
         for m in get_monitors():
-            return int(m.width)
+            return m.width
 
     def height():
         for m in get_monitors():
-            return int(m.height)
+            return m.height
 
 
 def set_wallpaper(path):
