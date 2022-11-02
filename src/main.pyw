@@ -2,7 +2,7 @@ import sys
 sys.path.append('src/')
 import gui
 import downloader
-from osHooks import resolution
+from osHooks import get_resolution
 
 helpStr = """
     Usage: wallpaper.sh [option] number
@@ -26,23 +26,22 @@ if __name__ == '__main__':
         gui.run()
         
     else:
-        for i, arg in enumerate(args):
-            if arg == "--help" or arg == "-h":  # if args have help then show help and break
-                print(helpStr)
-                exit()
-            elif arg == "--resolution" or arg == "-r":
-                resolution  = args[i+1].split("x")  # saving resolution
+        for i, arg in enumerate(args):   
+            if arg == "--resolution" or arg == "-r":
+                resolution  = args[i+1].split("x")  # saving resolution   
                 break
             else:
-                resolution = resolution().get()
-                break
-        
-        
+                resolution = get_resolution.get()
+
+            if arg == "--help" or arg == "-h":  # if args have help then show help and break
+                print(helpStr)
+                exit()  
+
         for i in range(0, int(args[-1])):
             url, name = downloader.get_image_url(resolution[0], resolution[1])
             downloader.image_download(url, name)
             print(name)
-                
+              
         
 
         

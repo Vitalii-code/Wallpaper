@@ -25,7 +25,7 @@ def image_download(url, name):
     file.close()
 
 
-def get_image_url(width=osHooks.resolution.width(), height=osHooks.resolution.height()):
+def get_image_url(width=osHooks.get_resolution.width(), height=osHooks.get_resolution.height()):
     url = "https://wallhaven.cc/search?q=id:37&sorting=random&ref=fp"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')

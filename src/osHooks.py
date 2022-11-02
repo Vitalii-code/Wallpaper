@@ -13,10 +13,11 @@ else:
     pass
 
 
-class resolution():
-    def get(self):
+class get_resolution:
+    def get():
         for m in get_monitors():
-            return m.width, m.height
+            resolution = [m.width, m.height]
+            return resolution
 
     def width():
         for m in get_monitors():
