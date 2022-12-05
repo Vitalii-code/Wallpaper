@@ -25,10 +25,28 @@
 # Скачування і використання
 Просто запустіть "wallpaper.bat" для Windows або "wallpaper.sh" для Linux.
 
+# Пакування (тільки Linux)
+Ви також можете запакувати программу використавши "linux_build.sh"
+
 # Підтримувані операційні системи
 - Windows(10, 11)
 - Linux(kde, gnome, xfce в розробці)
 - MacOS в розробці
+
+
+# Команди для терміналу
+    Usage: wallpaper.sh [option] number
+    Example:
+    wallpaper.sh - without arguments starting gui
+    wallpaper.sh -r 1024x800 5
+    wallpaper.sh 2
+    
+    Number is amount of images that you need
+    
+    [option]
+    -r , --resolution = set the resolution of image(default is resolution of your main monitor)
+    -h , --help = display this help and exit
+
 
  
 
