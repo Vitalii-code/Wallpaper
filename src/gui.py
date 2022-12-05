@@ -60,8 +60,7 @@ class MainWindow(QMainWindow):
             pass
         else:
             message = QMessageBox.information(self, "Wallpaper", "The program must be in tray")
-            if message.Ok:
-                self.tray.showMessage("Wallpaper", "I'm here!", QIcon("icons/ico.ico"), 5000)
+            if message.Ok:       
                 if not config.has_section("settings"):
                     config.add_section("settings")
                 config.set("settings", "startup_dialog", "False")
