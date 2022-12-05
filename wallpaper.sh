@@ -12,7 +12,14 @@ else
     python3 -m pip install --user virtualenv # install venv
 fi
 
+if [ -e venv ]
+then
+    echo
+else
+    python3 -m virtualenv -q venv # creating venv
+fi
 
-python3 -m virtualenv -q venv # creating venv
+
+
 venv/bin/pip3 install -q -r requirements/linux_requirements.txt # installing requirements
 venv/bin/python3 src/main.pyw $@
