@@ -25,6 +25,14 @@ This program can download images for your desktop background
 # Download and usage
 Just run the "wallpaper.bat" for Windows or "wallpaper.sh" for Linux.
 
+# Building (Linux only)
+You can also build wallpaper by using "linux_build.sh"
+
+# Supported os
+- Windows(10, 11)
+- Linux(kde, gnome, xfce in development)
+- MacOS is in development
+
 # Terminal commands
     Usage: wallpaper.sh [option] number
     Example:
@@ -38,10 +46,7 @@ Just run the "wallpaper.bat" for Windows or "wallpaper.sh" for Linux.
     -r , --resolution = set the resolution of image(default is resolution of your main monitor)
     -h , --help = display this help and exit
 
-# Supported os
-- Windows(10, 11)
-- Linux(kde, gnome, xfce in development)
-- MacOS is in development
+
 
  
 
