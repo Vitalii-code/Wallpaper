@@ -28,7 +28,7 @@ class get_resolution:
             return m.height
 
 
-def set_wallpaper(path):
+def set_wallpaper(path: str):
     if platform.system() == "Windows":
         ctypes.windll.user32.SystemParametersInfoW(20, 0, path, 0)
 

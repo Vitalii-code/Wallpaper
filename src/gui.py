@@ -4,7 +4,6 @@ from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QMessageBox
 from notifypy import Notify
 # Python libs
-import os
 import sys
 from os.path import basename
 from configparser import ConfigParser
@@ -15,18 +14,28 @@ import osHooks
 import downloader
 
 
-class MainWindow(QMainWindow):
+class UI(QMainWindow):
     def __init__(self):
         super().__init__()
-
-        imgList = []
         # Add current wallpaper to list
+        img_list = []
         name = osHooks.get_wallpaper()
-        imgList.append(name)
-        self.initUI(imgList)
+        img_list.append(name)
 
-    def initUI(self, imgList):
+        # init tray, window and startup dialog
+        self.init_tray(img_list)
+        #self.init_window()
+        self.startup_dialog()
+
+    def init_window(self):
+        # Main Window settings 
         self.setWindowIcon(QIcon("icons/ico.ico"))
+        self.setWindowTitle("Wallpaper")
+        self.resize(1000, 500)
+
+        self.show()
+
+    def init_tray(self, img_list):
         # TrayIcon
         self.tray = QSystemTrayIcon(self)
         self.tray.setIcon(QIcon("icons/ico.ico"))
@@ -34,33 +43,39 @@ class MainWindow(QMainWindow):
 
         # trayMenu
         self.menu = QMenu(self)
-        self.nextImage = QAction("Next image")
-        self.prevImage = QAction("Previous image")
-        self.quit = QAction("Quit")
+        self.next_image_action = QAction("Next image")
+        self.prev_image_action = QAction("Previous image")
+        #self.browse_images_action = QAction("Browse Images")
+        self.quit_action = QAction("Quit")
 
-        self.nextImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-next")))
-        self.prevImage.setIcon(QIcon(QtGui.QIcon.fromTheme("go-previous")))
-        self.quit.setIcon(QIcon(QtGui.QIcon.fromTheme("window-close")))
+        # set icons
+        self.next_image_action.setIcon(QIcon(QtGui.QIcon.fromTheme("go-next")))
+        self.prev_image_action.setIcon(QIcon(QtGui.QIcon.fromTheme("go-previous")))
+        #self.browse_images_action.setIcon(QIcon(QtGui.QIcon.fromTheme("format-justify-fill")))
+        self.quit_action.setIcon(QIcon(QtGui.QIcon.fromTheme("window-close")))
 
-        self.nextImage.triggered.connect(
-            lambda: threading.Thread(target=Buttons.next_image, args=(self, imgList)).start())
-        self.prevImage.triggered.connect(lambda: Buttons.prev_image(self, imgList))
-        self.quit.triggered.connect(QApplication.quit)
+        # bind buttons to functions
+        self.next_image_action.triggered.connect(lambda: Buttons.next_image(self, img_list))
+        self.prev_image_action.triggered.connect(lambda: Buttons.prev_image(self, img_list))
+        #self.browse_images_action.triggered.connect(lambda: self.show())
+        self.quit_action.triggered.connect(QApplication.quit)
 
-        self.menu.addAction(self.nextImage)
-        self.menu.addAction(self.prevImage)
-        self.menu.addAction(self.quit)
+        self.menu.addAction(self.next_image_action)
+        self.menu.addAction(self.prev_image_action)
+        #self.menu.addAction(self.browse_images_action)
+        self.menu.addAction(self.quit_action)
 
         self.tray.setContextMenu(self.menu)
 
-        # creating start dialog
+    def startup_dialog(self):
+        # creating startup dialog if it's needed
         config = ConfigParser()
         config.read('config.ini')
         if config.has_section('settings') and config['settings']['startup_dialog'] == "False":
             pass
         else:
             message = QMessageBox.information(self, "Wallpaper", "The program must be in tray")
-            if message.Ok:       
+            if message.Ok:
                 if not config.has_section("settings"):
                     config.add_section("settings")
                 config.set("settings", "startup_dialog", "False")
@@ -69,28 +84,36 @@ class MainWindow(QMainWindow):
 
 
 class Buttons:
-    def next_image(self, imgList):
+    current_img = 0
+    def next_image(self, img_list):
         if downloader.check_net():
-            url, name = downloader.get_image_url()
-            downloader.image_download(url, name)
-            osHooks.set_wallpaper(name + ".jpg")
-            imgList.append(name + ".jpg")
-            Notify("Wallpaper", basename(name), default_notification_icon="icons/ico.ico").send()
+            threading.Thread(target=Buttons.next_image_thread, args=(self, img_list)).start()
         else:
             QMessageBox.critical(self, "Wallpaper", "No internet connection")
 
-    def prev_image(self, imgList):
-        if len(imgList) > 1:
-            os.remove(imgList[-1])
-            imgList.pop()
-            if imgList[-1] != "None":
-                osHooks.set_wallpaper(imgList[-1])
-                Notify("Wallpaper", basename(imgList[-1]),
-                       default_notification_icon="icons/ico.ico").send()
+    def next_image_thread(self, img_list):
+        Buttons.current_img += 1
+        try:
+            img_list[Buttons.current_img]
+
+        except IndexError:
+            url, name = downloader.get_image_url()
+            downloader.image_download(url, name)
+            img_list.append(name + ".jpg")
+
+        osHooks.set_wallpaper(img_list[Buttons.current_img])
+        Notify("Wallpaper", basename(img_list[Buttons.current_img]), default_notification_icon="icons/ico.ico").send()
+
+    def prev_image(self, img_list):
+        if len(img_list) > 1 and Buttons.current_img != 0:
+            Buttons.current_img -= 1
+            osHooks.set_wallpaper(img_list[Buttons.current_img])
+            Notify("Wallpaper", basename(img_list[Buttons.current_img]),
+                   default_notification_icon="icons/ico.ico").send()
 
 
 def run():
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
-    window = MainWindow()
+    UI()
     sys.exit(app.exec())
