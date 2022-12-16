@@ -1,10 +1,11 @@
 # Cross-platform libs
 from PyQt6 import QtGui
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QMessageBox, QStyle
 from notifypy import Notify
 # Python libs
 import sys
+from platform import system
 from os.path import basename
 from configparser import ConfigParser
 import threading
@@ -49,10 +50,15 @@ class UI(QMainWindow):
         self.quit_action = QAction("Quit")
 
         # set icons
-        self.next_image_action.setIcon(QIcon(QtGui.QIcon.fromTheme("go-next")))
-        self.prev_image_action.setIcon(QIcon(QtGui.QIcon.fromTheme("go-previous")))
-        #self.browse_images_action.setIcon(QIcon(QtGui.QIcon.fromTheme("format-justify-fill")))
-        self.quit_action.setIcon(QIcon(QtGui.QIcon.fromTheme("window-close")))
+        self.next_image_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight))
+        self.prev_image_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowLeft))
+        self.quit_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCloseButton))
+        
+        # set specific icons for windows
+        if system() == "Windows":
+            self.next_image_action.setIcon(QIcon("icons/arrow-right-dark.svg"))
+            self.prev_image_action.setIcon(QIcon("icons/arrow-left-dark.svg"))
+            self.quit_action.setIcon(QIcon("icons/close-dark.svg"))
 
         # bind buttons to functions
         self.next_image_action.triggered.connect(lambda: Buttons.next_image(self, img_list))
@@ -100,6 +106,8 @@ class Buttons:
             url, name = downloader.get_image_url()
             downloader.image_download(url, name)
             img_list.append(name + ".jpg")
+
+        
 
         osHooks.set_wallpaper(img_list[Buttons.current_img])
         Notify("Wallpaper", basename(img_list[Buttons.current_img]), default_notification_icon="icons/ico.ico").send()
