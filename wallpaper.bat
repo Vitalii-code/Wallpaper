@@ -2,10 +2,8 @@
 setlocal enabledelayedexpansion
 echo [Wallpaper] Loading...
 
-set version="3.9.13"
-set version_code="39"
-@REM set version="3.11.0"
-@REM set version_code="311"
+set version="3.11.0"
+set version_code="311"
 
 
 if not exist "python\" (
