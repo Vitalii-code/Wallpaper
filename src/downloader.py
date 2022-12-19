@@ -4,6 +4,7 @@ import requests
 import osHooks
 from os import getcwd, path, mkdir
 from platform import system
+import socket
 
 imgFolder = getcwd()
 if system() == "Linux":
@@ -43,7 +44,11 @@ def get_image_url(width=osHooks.get_resolution.width(), height=osHooks.get_resol
 
 def check_net():
     try:
-        requests.get("http://www.google.com")
+        host = socket.gethostbyname("1.1.1.1")
+        s = socket.create_connection((host, 80), 2)
+        s.close()
         return True
-    except requests.ConnectionError:
-        return False
+    except Exception:
+        pass
+    return False
+
