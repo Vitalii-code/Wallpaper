@@ -25,11 +25,12 @@ class UI(QMainWindow):
 
         # init tray, window and startup dialog
         self.init_tray(img_list)
-        #self.init_window()
+
+        # self.init_window()
         self.startup_dialog()
 
     def init_window(self):
-        # Main Window settings 
+        # Main Window settings
         self.setWindowIcon(QIcon("icons/ico.ico"))
         self.setWindowTitle("Wallpaper")
         self.resize(1000, 500)
@@ -46,14 +47,13 @@ class UI(QMainWindow):
         self.menu = QMenu(self)
         self.next_image_action = QAction("Next image")
         self.prev_image_action = QAction("Previous image")
-        #self.browse_images_action = QAction("Browse Images")
+        # self.browse_images_action = QAction("Browse Images")
         self.quit_action = QAction("Quit")
 
         # set icons
         self.next_image_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight))
         self.prev_image_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowLeft))
         self.quit_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCloseButton))
-        
         # set specific icons for windows
         if system() == "Windows":
             self.next_image_action.setIcon(QIcon("icons/arrow-right-dark.svg"))
@@ -63,12 +63,12 @@ class UI(QMainWindow):
         # bind buttons to functions
         self.next_image_action.triggered.connect(lambda: Buttons.next_image(self, img_list))
         self.prev_image_action.triggered.connect(lambda: Buttons.prev_image(self, img_list))
-        #self.browse_images_action.triggered.connect(lambda: self.show())
+        # self.browse_images_action.triggered.connect(lambda: self.show())
         self.quit_action.triggered.connect(QApplication.quit)
 
         self.menu.addAction(self.next_image_action)
         self.menu.addAction(self.prev_image_action)
-        #self.menu.addAction(self.browse_images_action)
+        # self.menu.addAction(self.browse_images_action)
         self.menu.addAction(self.quit_action)
 
         self.tray.setContextMenu(self.menu)
@@ -91,6 +91,7 @@ class UI(QMainWindow):
 
 class Buttons:
     current_img = 0
+
     def next_image(self, img_list):
         if downloader.check_net():
             threading.Thread(target=Buttons.next_image_thread, args=(self, img_list)).start()
@@ -106,8 +107,6 @@ class Buttons:
             url, name = downloader.get_image_url()
             downloader.image_download(url, name)
             img_list.append(name + ".jpg")
-
-        
 
         osHooks.set_wallpaper(img_list[Buttons.current_img])
         Notify("Wallpaper", basename(img_list[Buttons.current_img]), default_notification_icon="icons/ico.ico").send()
