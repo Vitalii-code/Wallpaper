@@ -23,7 +23,9 @@ This program can download images for your desktop background
 - Cross-platform
 
 # Download and usage
-Just run the "wallpaper.bat" for Windows or "wallpaper.sh" for Linux.
+- Clone repo 
+- Extract
+- Then run "wallpaper.bat" for Windows or "wallpaper.sh" for Linux.
 
 # Building (Linux only)
 You can also build wallpaper by using "linux_build.sh"
