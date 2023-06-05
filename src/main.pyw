@@ -1,5 +1,6 @@
 import sys
-sys.path.append('src/')
+
+sys.path.append("src/")
 import gui
 import downloader
 from osHooks import get_resolution
@@ -19,7 +20,7 @@ helpStr = """
     -h , --help = display this help and exit
 """
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = sys.argv
     if len(args) == 1:  # if no arguments then run gui
         gui.run()
@@ -32,7 +33,9 @@ if __name__ == '__main__':
             else:
                 resolution = get_resolution.get()
 
-            if arg == "--help" or arg == "-h":  # if args have help then show help and break
+            if (
+                arg == "--help" or arg == "-h"
+            ):  # if args have help then show help and break
                 print(helpStr)
                 exit()
 

@@ -26,19 +26,22 @@ def image_download(url, name):
     file.close()
 
 
-def get_image_url(width=osHooks.get_resolution.width(), height=osHooks.get_resolution.height()):
+def get_image_url(
+    width=osHooks.get_resolution.width(), height=osHooks.get_resolution.height()
+):
     url = "https://wallhaven.cc/search?q=id:37&sorting=random&ref=fp"
     response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'lxml')
-    quotes = soup.find_all('a', class_="preview")
+    soup = BeautifulSoup(response.text, "lxml")
+    quotes = soup.find_all("a", class_="preview")
 
     for i in quotes:
-        url = requests.get(i['href'])
-        soup = BeautifulSoup(url.text, 'lxml')
-        parsed = soup.find('img', id="wallpaper")
+        url = requests.get(i["href"])
+        soup = BeautifulSoup(url.text, "lxml")
+        parsed = soup.find("img", id="wallpaper")
 
-        if int(parsed['data-wallpaper-width']) >= int(width) and int(parsed['data-wallpaper-height']) >= int(
-                height):
+        if int(parsed["data-wallpaper-width"]) >= int(width) and int(
+            parsed["data-wallpaper-height"]
+        ) >= int(height):
             return parsed["src"], imgFolder + parsed["alt"]
 
 
@@ -51,4 +54,3 @@ def check_net():
     except Exception:
         pass
     return False
-

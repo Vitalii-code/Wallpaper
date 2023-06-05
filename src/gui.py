@@ -1,16 +1,25 @@
 # Cross-platform libs
 from PyQt6 import QtGui
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtWidgets import QMainWindow, QSystemTrayIcon, QMenu, QApplication, QMessageBox, QStyle
+from PyQt6.QtWidgets import (
+    QMainWindow,
+    QSystemTrayIcon,
+    QMenu,
+    QApplication,
+    QMessageBox,
+    QStyle,
+)
 from notifypy import Notify
+
 # Python libs
 import sys
 from platform import system
 from os.path import basename
 from configparser import ConfigParser
 import threading
+
 # custom libs
-sys.path.append('src/')
+sys.path.append("src/")
 import osHooks
 import downloader
 
@@ -51,9 +60,15 @@ class UI(QMainWindow):
         self.quit_action = QAction("Quit")
 
         # set icons
-        self.next_image_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight))
-        self.prev_image_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowLeft))
-        self.quit_action.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCloseButton))
+        self.next_image_action.setIcon(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight)
+        )
+        self.prev_image_action.setIcon(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowLeft)
+        )
+        self.quit_action.setIcon(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCloseButton)
+        )
         # set specific icons for windows
         if system() == "Windows":
             self.next_image_action.setIcon(QIcon("icons/arrow-right-dark.svg"))
@@ -61,8 +76,12 @@ class UI(QMainWindow):
             self.quit_action.setIcon(QIcon("icons/close-dark.svg"))
 
         # bind buttons to functions
-        self.next_image_action.triggered.connect(lambda: Buttons.next_image(self, img_list))
-        self.prev_image_action.triggered.connect(lambda: Buttons.prev_image(self, img_list))
+        self.next_image_action.triggered.connect(
+            lambda: Buttons.next_image(self, img_list)
+        )
+        self.prev_image_action.triggered.connect(
+            lambda: Buttons.prev_image(self, img_list)
+        )
         # self.browse_images_action.triggered.connect(lambda: self.show())
         self.quit_action.triggered.connect(QApplication.quit)
 
@@ -76,16 +95,21 @@ class UI(QMainWindow):
     def startup_dialog(self):
         # creating startup dialog if it's needed
         config = ConfigParser()
-        config.read('config.ini')
-        if config.has_section('settings') and config['settings']['startup_dialog'] == "False":
+        config.read("config.ini")
+        if (
+            config.has_section("settings")
+            and config["settings"]["startup_dialog"] == "False"
+        ):
             pass
         else:
-            message = QMessageBox.information(self, "Wallpaper", "The program must be in tray")
+            message = QMessageBox.information(
+                self, "Wallpaper", "The program must be in tray"
+            )
             if message.Ok:
                 if not config.has_section("settings"):
                     config.add_section("settings")
                 config.set("settings", "startup_dialog", "False")
-                with open("config.ini", 'w') as configfile:
+                with open("config.ini", "w") as configfile:
                     config.write(configfile)
 
 
@@ -94,7 +118,9 @@ class Buttons:
 
     def next_image(self, img_list):
         if downloader.check_net():
-            threading.Thread(target=Buttons.next_image_thread, args=(self, img_list)).start()
+            threading.Thread(
+                target=Buttons.next_image_thread, args=(self, img_list)
+            ).start()
         else:
             QMessageBox.critical(self, "Wallpaper", "No internet connection")
 
@@ -109,14 +135,21 @@ class Buttons:
             img_list.append(name + ".jpg")
 
         osHooks.set_wallpaper(img_list[Buttons.current_img])
-        Notify("Wallpaper", basename(img_list[Buttons.current_img]), default_notification_icon="icons/ico.ico").send()
+        Notify(
+            "Wallpaper",
+            basename(img_list[Buttons.current_img]),
+            default_notification_icon="icons/ico.ico",
+        ).send()
 
     def prev_image(self, img_list):
         if len(img_list) > 1 and Buttons.current_img != 0:
             Buttons.current_img -= 1
             osHooks.set_wallpaper(img_list[Buttons.current_img])
-            Notify("Wallpaper", basename(img_list[Buttons.current_img]),
-                   default_notification_icon="icons/ico.ico").send()
+            Notify(
+                "Wallpaper",
+                basename(img_list[Buttons.current_img]),
+                default_notification_icon="icons/ico.ico",
+            ).send()
 
 
 def run():

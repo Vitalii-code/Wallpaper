@@ -62,9 +62,7 @@ def get_wallpaper():
 
 
         elif os.environ.get('KDE_FULL_SESSION') == 'true':
-            name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop
-                                               -appletsrc" --group 'Containments' --group '1' --group 'Wallpaper' 
-                                               --group 'org.kde.image' --group 'General' --key 'Image'"""],
+            name = subprocess.check_output(["""kreadconfig5 --file "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" --group "Containments" --group "1" --group "Wallpaper" --group "org.kde.image" --group "General" --key "Image" """],
                                            shell=True)
             return decode_string_from_terminal(name)
 
