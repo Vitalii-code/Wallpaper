@@ -42,7 +42,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Package with pyinstaller
       run: |
-        source env/bin/activate
         pyinstaller src/main.pyw --clean --onefile --name Wallpaper --icon icons/ico.ico
     
     - uses: actions/upload-artifact@v3
