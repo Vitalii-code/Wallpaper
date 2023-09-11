@@ -32,12 +32,6 @@ jobs:
         python -m pip install flake8 pyinstaller
         python -m pip install -U pyinstaller
         
-        pip install virtualenv
-        python -m venv env
-        source env/bin/activate
-        echo "VIRTUAL ENV:" $VIRTUAL_ENV
-
-        
         if [ -f requirements/linux_requirements.txt ]; then pip install -r requirements/linux_requirements.txt; fi
       
     - name: Lint with flake8
