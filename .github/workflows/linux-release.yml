@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 pyinstaller
+        python -m pip install flake8 pyinstaller opencv-python
         if [ -f requirements/linux_requirements.txt ]; then pip install -r requirements/linux_requirements.txt; fi
     - name: Lint with flake8
       run: |
