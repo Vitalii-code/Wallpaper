@@ -26,12 +26,14 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        sudo apt install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0
+        
       
         python -m pip install --upgrade pip
         
         python -m pip install flake8 pyinstaller
         python -m pip install -U pyinstaller
+
+        python -m pip install --no-binary opencv-python opencv-python
         
         if [ -f requirements/linux_requirements.txt ]; then pip install -r requirements/linux_requirements.txt; fi
       
